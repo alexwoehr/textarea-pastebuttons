@@ -1,6 +1,6 @@
 <?php
 
-  if (!($conn = mysql_connect()) {die("CANNOT CONNECT"); }else { die("CAN CONNECT") };
+  if (!($conn = mysql_connect()) {die("CANNOT CONNECT"); }
 
 ?>
 <html>
