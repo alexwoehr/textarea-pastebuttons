@@ -22,22 +22,50 @@
     <script src="jquery.tmpl.js"></script>
   </head>
   <body>
-    <textarea></textarea>
-    <fieldset id="buttons"></fieldset>
+    <textarea class="main"></textarea>
+    <fieldset id="buttons"></fieldset><a href="#" class="new">New snippet</a>
     <script src="text/javascript">
       jQuery(document).ready(function($){
         // Data
         var snippets = <?php echo json_encode($snippets); ?>;
 
         // Setup buttons
-        $(".button").tmpl(snippets).appendTo("#buttons");
+        $(".button").tmpl(snippets).
+          // Setup functionality
+          find("button").
+            click(function(){
+              var add = $(this).next("textarea").text();
+              $("textarea.main").text(function(t) {return t + add; });
+            });
+          find(".save").
+            click(function(){ save.call(this); $(this).prev("textarea").andSelf().hide(); }).
+            end().
+          find(".edit").
+            click(function(){ $(this).next("textarea").next(".hide").andSelf().show(); }).
+            end().
+          find(".drop").
+            click(function(){ $(this).parent("fieldset").remove(); }).
+            end().
 
-        // Editing functionality
+          // Add it
+          prependTo("#buttons");
       });
+
+      // "Event" on the textarea
+      function save() {
+        $(this).click(function(){
+        });
+      }
     </script>
     <div id="templates">
       <script class="button" type="text/x-jquery-tmpl">
-        <button>${title}</button><code display="none">${contents}</code>
+        <fieldset>
+          <button>${title}</button>
+          <textarea display="none">${contents}</textarea>
+          <a href="#" class="save" display="none">Save</a>
+          <a href="#" class="edit">Edit</a>
+          <a href="#" class="drop">Remove</a>
+        </fieldset>
       </script>
     </div>
   </body>
