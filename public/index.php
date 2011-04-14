@@ -3,7 +3,7 @@
   require_once("util.php");
 
   // Check inputs
-  if (!$_GET['fn']) {
+  if (!isset($_GET['fn'])) {
     // Load default page
     require("index.fn.php");
   } elseif ($_GET['fn'] == "save") {

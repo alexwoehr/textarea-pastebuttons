@@ -2,7 +2,10 @@
 
   // Slurp query
   function slurq($conn) {
-    $results = mysql_query(ob_get_clean());
+    if (!$results = mysql_query(ob_get_clean())) {
+      die();
+      return false;
+    }
 
     // Load results
     $snippets[] = mysql_fetch_assoc($results);
@@ -11,5 +14,6 @@
     return $snippets;
   }
 
-  $conn = mysql_connect("10.194.111.8", "user_e39e7998", ".3g3vCFVgf7Tmm", "db_e39e7998");
+  // Initalize the connection
+  mysql_connect("10.194.111.8", "user_e39e7998", ".3g3vCFVgf7Tmm", "db_e39e7998");
 

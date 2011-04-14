@@ -3,7 +3,7 @@
   // Build query
   ob_start(); ?>
 
-    SELECT * FROM text_snippets;
+    SELECT * FROM text_snippets
 
   <?php
 

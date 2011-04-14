@@ -2,8 +2,7 @@
 
 function tpl($data) {
 
-?>
-<html>
+?><html>
   <head>
     <script src="jquery.js"></script>
     <script src="jquery.tmpl.js"></script>
