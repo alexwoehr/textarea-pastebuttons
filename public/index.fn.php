@@ -9,5 +9,7 @@
 
   // Run it
   require("index.tpl.php");
-  tpl(slurq());
+  tpl(Array(
+    "snippets" => slurq()
+  ));
 

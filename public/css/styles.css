@@ -1,0 +1,10 @@
+      /* States */
+      #buttons .saved .save { display: none; }
+      #buttons .saved textarea { display: none; }
+      #buttons .saved button + input { display: none; } /* Caption editor for button */
+      #buttons .opened .open { display: none; }
+      #buttons .opened .drop { display: none; }
+      #buttons .opened button { display: none; }
+
+      #buttons fieldset { width: auto; float: left; }
+      #buttons button + input { width: 120px; }
