@@ -3,7 +3,7 @@
   // Slurp query
   function slurq($conn) {
     if (!$results = mysql_query(ob_get_clean())) {
-      die();
+      die("Trouble: ".mysql_error());
       return false;
     }
 
