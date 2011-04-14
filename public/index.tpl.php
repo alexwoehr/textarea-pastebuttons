@@ -24,7 +24,7 @@ function tpl($data) {
             <input value="${title}" tabindex="10" />
             <a href="#" class="up">&raquo;</a>
           </div>
-          <textarea cols="20" rows="4">${contents}</textarea><br />
+          <textarea cols="20" rows="4" tabindex="10">${contents}</textarea><br />
           <a href="#" class="open">Edit</a>
           <a href="#" class="save" tabindex="10">Save</a>
           <a href="#" class="drop">Remove</a>
