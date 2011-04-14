@@ -19,6 +19,7 @@
     return $snippets;
   }
 
+  // Setup tables
   function tables() {
     ?>
 
