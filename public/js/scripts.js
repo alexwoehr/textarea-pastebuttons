@@ -4,6 +4,7 @@ jQuery(document).ready(function(){
 
   // Assemble the crucial values for a fieldset
   function generateVars(fieldset) {
+    if (!fieldset.is("fieldset")) fieldset = fieldset.closest("fieldset");
     return {
       // The main text area
       content: $("textarea.main"),
@@ -26,6 +27,7 @@ jQuery(document).ready(function(){
   }
 
   // Allow single and double click
+  // Sharp; from https://gist.github.com/399624
   jQuery.fn.single_double_click = function(single_click_callback, double_click_callback, timeout) {
     return this.each(function(){
       var clicks = 0, self = this;
@@ -43,19 +45,22 @@ jQuery(document).ready(function(){
         }
       });
     });
-  }
+  };
+
+  // Shortcut for binding click command
   $.fn.clicker = function(s, f){
     // Search case: search on s, bind, then end
     if (s) return this.find(s).clicker(false, f).end();
     // Base case: Bind clicker on this
     else return this.click(function(events){
       // Call using default variables
-      f(generateVars($(this).closest("fieldset")));
+      f(generateVars(this));
       events.preventDefault();
       return false;
     });
   };
 
+  // POST changes in a snippet to the server.
   $.fn.postDB = function() {
     with(generateVars(this)) {
       $.post(
@@ -74,12 +79,12 @@ jQuery(document).ready(function(){
   $.fn.clothe = function(){
     return this.
       // Open, save: toggle saved/opened state
-      clicker(".open, .save", function(_){ with(_){
+      clicker(".open, .save", function(_){with(_){
         _.toggleClass("saved opened");
       }}).
 
       // Added functionality for save: save to database
-      clicker(".save", function(_){ with(_){
+      clicker(".save", function(_){with(_){
         _.postDB(); // Save it
       }}).
     
@@ -93,10 +98,9 @@ jQuery(document).ready(function(){
         _.remove().insertAfter(next).clothe();
       }}).
     
-      // Drop: remove
+      // Drop: remove a snippet
       clicker(".drop", function(_){with(_){
-        // Remove from database
-        // Clear title
+        // Force remove from database by clearing caption
         button.text("");
         // Save and drop
         _.postDB().remove();
@@ -114,11 +118,11 @@ jQuery(document).ready(function(){
       find("button").
         single_double_click(
           // Single
-          function(){with(generateVars($(this).closest("fieldset"))){
+          function(){with(generateVars(this)){
             content.val(function(i, t) { return t + textarea.val(); });
           }},
           // Double
-          function(){with(generateVars($(this).closest("fieldset"))){
+          function(){with(generateVars(this)){
             edit.click();
           }}
         ).
