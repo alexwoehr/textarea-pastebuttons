@@ -10,9 +10,13 @@ function tpl($data) {
       /* States */
       #buttons .saved .save { display: none; }
       #buttons .saved textarea { display: none; }
+      #buttons .saved button + input { display: none; } /* Caption editor for button */
       #buttons .opened .open { display: none; }
+      #buttons .opened .drop { display: none; }
+      #buttons .opened button { display: none; }
 
       #buttons fieldset { width: auto; float: left; }
+      #buttons button + input { width: 120px; }
     </style>
   </head>
   <body>
@@ -23,33 +27,53 @@ function tpl($data) {
         // Data
         var snippets = <?php echo json_encode($data); ?>;
 
+        // Assemble the crucial values for a fieldset
+        function generateVars(fieldset) {
+          return {
+            // The main text area
+            content: $("textarea.main"),
+
+            // The fieldset itself
+            _: fieldset,
+
+            // Text for this fieldset
+            textarea: fieldset.find("textarea"),
+            button: fieldset.find("button"),
+            caption: fieldset.find("button + input"),
+            open: fieldset.find(".open"),
+            save: fieldset.find(".save"),
+            down: fieldset.find(".down"),
+            up: fieldset.find(".down"),
+            _class: fieldset.attr("className"),
+            prev: fieldset.prev(),
+            next: fieldset.next()
+          };
+        }
+
         $.fn.clicker = function(s, f){
           // Search case: search on s, bind, then end
           if (s) return this.find(s).clicker(false, f).end();
           // Base case: Bind clicker on this
           else return this.click(function(events){
-            // Define default arguments for the function
-            f({
-              // The main text area
-              content: $("textarea.main"),
-              // The fieldset in question, the most important variable
-
-              _: $(this).closest("fieldset"),
-
-              // Text for this fieldset
-              textarea: $(this).closest("fieldset").find("textarea"),
-              open: $(this).closest("fieldset").find(".open"),
-              save: $(this).closest("fieldset").find(".save"),
-              down: $(this).closest("fieldset").find(".down"),
-              up: $(this).closest("fieldset").find(".down"),
-              myClass: $(this).attr("className"),
-              parentClass: $(this).closest("textarea").attr("className"),
-              prev: $(this).closest("fieldset").prev(),
-              next: $(this).closest("fieldset").next()
-            });
+            // Call using default variables
+            f(generateVars($(this).closest("fieldset")));
             events.preventDefault();
             return false;
           });
+        };
+
+        $.fn.postDB = function() {
+          with(generateVars(this)) {
+            $.post(
+              location, 
+              { fn: "save"
+              , id: _.attr("id").match(/-(\d+)$/)[1]
+              , title: button.text()
+              , contents: textarea.val()
+              }
+            );
+          }
+          return this;
         };
 
         // Add events to a snippet
@@ -64,6 +88,11 @@ function tpl($data) {
             clicker(".open, .save", function(_){ with(_){
               _.toggleClass("saved opened");
             }}).
+
+            // Added functionality for save: save to database
+            clicker(".save", function(_){ with(_){
+              _.postDB(); // Save it
+            }}).
           
             // Down: move position back/down
             clicker(".down", function(_){with(_){
@@ -77,8 +106,19 @@ function tpl($data) {
           
             // Drop: remove
             clicker(".drop", function(_){with(_){
-              _.remove();
-            }});
+              // Remove from database
+              // Clear title
+              button.text("");
+              // Save and drop
+              _.postDB().remove();
+            }}).
+
+            // Caption: keep text consistent with button
+            find("button + input").
+              keyup(function(){
+                $(this).prev("button").text($(this).val());
+              }).
+            end();
         
         };
 
@@ -86,7 +126,10 @@ function tpl($data) {
         // Setup buttons
         // Can take one or more snippets
         function addButton(snippets) {
-          $(".button").tmpl(snippets).clothe().appendTo("#buttons");
+          return $(".button").
+            tmpl(snippets).
+            clothe().
+            appendTo("#buttons");
         }
 
         // Add initial snippets
@@ -95,12 +138,12 @@ function tpl($data) {
         // Setup "add button" functionality
         $(".new").click(function(e){
           snippet = {
-            id: snippets.length,
+            id: snippets.length + 1, // DB id starts past 0
             title: "New Snippet",
             contents: "Edit Snippet"
           };
           snippets.push(snippet);
-          addButton(snippet);
+          addButton(snippet).toggleClass("saved opened");
           e.preventDefault();
           return false;
         });
@@ -118,9 +161,10 @@ function tpl($data) {
           <div>
             <a href="#" class="down">&lsaquo;</a>
             <button>${title}</button>
+            <input value="${title}" />
             <a href="#" class="up">&rsaquo;</a>
           </div>
-          <textarea>${contents}</textarea>
+          <textarea cols="20" rows="4">${contents}</textarea><br />
           <a href="#" class="open">Edit</a>
           <a href="#" class="save">Save</a>
           <a href="#" class="drop">Remove</a>
