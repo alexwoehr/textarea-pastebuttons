@@ -9,5 +9,5 @@
 
   // Run it
   require("index.tpl.php");
-  tpl(slurq($conn));
+  tpl(slurq());
 
