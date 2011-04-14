@@ -4,6 +4,7 @@ jQuery(document).ready(function(){
 
   // Assemble the crucial values for a fieldset
   function generateVars(fieldset) {
+    fieldset = jQuery(fieldset);
     if (!fieldset.is("fieldset")) fieldset = fieldset.closest("fieldset");
     return {
       // The main text area
