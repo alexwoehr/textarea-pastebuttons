@@ -6,8 +6,8 @@
   if (!$_GET['fn']) {
     // Load default page
     require("index.fn.php");
-  } elseif ($_GET['fn'] == "savebutton") {
-    require("savebutton.fn.php");
+  } elseif ($_GET['fn'] == "save") {
+    require("save.fn.php");
   }
 
 ?>
